@@ -28,7 +28,7 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int, det: ObjectDe
          
         # Grab the raw NumPy array representing the image
         image = frame.array
-        det.detect(image)
+        det.detect(image, frame_count)
         
         cv2.imshow("Frame", image)
          
@@ -53,7 +53,7 @@ def main():
     res = (416, 416)
     FPS = 30
     rotation = 90
-    num_frames = 40
+    num_frames = 10
     
     camera = setup_camera(rotation, res, FPS)
     det = ObjectDetector()

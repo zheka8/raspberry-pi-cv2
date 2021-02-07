@@ -14,8 +14,9 @@ camera.stop_preview()
 '''
 
 det = ObjectDetector()
-img = cv2.imread('test.jpg')
-det.detect(img)
+img = cv2.imread('horse.jpg')
+print(img.shape)
+det.detect(img, 0)
 cv2.imshow('Image', img)
 print(img.shape)
 cv2.waitKey(0)

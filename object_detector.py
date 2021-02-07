@@ -28,22 +28,24 @@ class ObjectDetector():
         return net
 
 
-    def detect(self, img):
-        class_ids, confs, bbox = self.net.detect(img, confThreshold=0.4, nmsThreshold=0.7)
-        self.show(img, class_ids, confs, bbox)
+    def detect(self, img, frame_count):
+        class_ids, confs, bbox = self.net.detect(img, confThreshold=0.5, nmsThreshold=0.5)
+        self.show(img, frame_count, class_ids, confs, bbox)
 
 
-    def show(self, img, class_ids, confs, bbox):
-        thickness = 2
+    def show(self, img, frame_count, class_ids, confs, bbox):
+        thickness = 1
         color = (0, 255, 0)
 
         cv2.imshow('Frame', img)
         if len(class_ids) > 0:
-            print('Found something...')
+            print('Frame {0}: found something...'.format(frame_count))
             for class_id, conf, box in zip(class_ids.flatten(), confs.flatten(), bbox):
-                class_name = classes[class_id].upper()
-                print(class_name)
+                class_name = self.class_names[class_id].upper()
+                label = class_name + ' ' + str(conf)
+                print(label)
+                
                 cv2.rectangle(img, box, color=color, thickness=thickness)
-                cv2.putText(img, class_name, (box[0]+10, box[1]+30), cv2.FONT_HERSHEY_COMPLEX, 1, color, thickness)
+                cv2.putText(img, label, (box[0]+10, box[1]+30), cv2.FONT_HERSHEY_COMPLEX, 0.5, color, thickness)
         else:
-            print('Nothing found')
+            print('Frame {0}: nothing found'.format(frame_count))
