@@ -3,7 +3,7 @@ from picamera import PiCamera # Provides a Python interface for the RPi Camera M
 import time # Provides time-related functions
 import cv2 # OpenCV library
 
-import object_detector
+from object_detector import ObjectDetector
 
 def setup_camera(rotation: int, resolution: tuple, FPS: int) -> PiCamera:
     ''' setup the pi camera and return it
@@ -11,11 +11,11 @@ def setup_camera(rotation: int, resolution: tuple, FPS: int) -> PiCamera:
     camera = PiCamera()
     camera.rotation = rotation
     camera.resolution = resolution
-    camera.framerate = 10
+    camera.framerate = FPS
     
     return camera
 
-def run_camera(camera: PiCamera, resolution: int, num_frames: int):
+def run_camera(camera: PiCamera, resolution: int, num_frames: int, det: ObjectDetector):
     # Generates a 3D RGB array and stores it in rawCapture
     raw_capture = PiRGBArray(camera, size=resolution)
      
@@ -28,6 +28,8 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int):
          
         # Grab the raw NumPy array representing the image
         image = frame.array
+        det.detect(image)
+        
         cv2.imshow("Frame", image)
          
         # Wait for keyPress for 1 millisecond
@@ -43,16 +45,21 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int):
         frame_count += 1
         
     # After the loop release the cap object 
-    vid.release() 
+    #vid.release() 
     # Destroy all the windows 
     cv2.destroyAllWindows() 
 
 def main():
-    camera = setup_camera(90, (640, 480), 10)
-    #run_camera(camera, (640, 480), 40)
+    res = (416, 416)
+    FPS = 30
+    rotation = 90
+    num_frames = 40
     
-    classes = object_detector.read_classes('yolov3/coco.names')
-    print(classes)
+    camera = setup_camera(rotation, res, FPS)
+    det = ObjectDetector()
+    
+    run_camera(camera, res, num_frames, det)
+
 
 if __name__ == '__main__':
     main()
