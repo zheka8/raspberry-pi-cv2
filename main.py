@@ -2,7 +2,8 @@ from picamera.array import PiRGBArray # Generates a 3D RGB array
 from picamera import PiCamera # Provides a Python interface for the RPi Camera Module
 import time # Provides time-related functions
 import cv2 # OpenCV library
-import numpy 
+
+import object_detector
 
 def setup_camera(rotation: int, resolution: tuple, FPS: int) -> PiCamera:
     ''' setup the pi camera and return it
@@ -27,8 +28,6 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int):
          
         # Grab the raw NumPy array representing the image
         image = frame.array
-         
-        # Display the frame using OpenCV
         cv2.imshow("Frame", image)
          
         # Wait for keyPress for 1 millisecond
@@ -50,7 +49,10 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int):
 
 def main():
     camera = setup_camera(90, (640, 480), 10)
-    run_camera(camera, (640, 480), 40)
+    #run_camera(camera, (640, 480), 40)
+    
+    classes = object_detector.read_classes('yolov3/coco.names')
+    print(classes)
 
 if __name__ == '__main__':
     main()
