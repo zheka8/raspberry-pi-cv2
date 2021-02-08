@@ -1,4 +1,5 @@
 import cv2
+import time
 
 class ObjectDetector:
     
@@ -29,9 +30,13 @@ class ObjectDetector:
 
 
     def detect(self, img, frame_count):
+        t = time.time()
         class_ids, confs, bbox = self.net.detect(img, confThreshold=0.5, nmsThreshold=0.5)
+        print("Inference Time: {0:.2f} sec".format(time.time() - t))
+        
+        t = time.time()
         self.show(img, frame_count, class_ids, confs, bbox)
-
+        print("Display Time: {0:.2f} sec".format(time.time() - t))
 
     def show(self, img, frame_count, class_ids, confs, bbox):
         thickness = 1
@@ -49,3 +54,4 @@ class ObjectDetector:
                 cv2.putText(img, label, (box[0]+10, box[1]+30), cv2.FONT_HERSHEY_COMPLEX, 0.5, color, thickness)
         else:
             print('Frame {0}: nothing found'.format(frame_count))
+            pass
