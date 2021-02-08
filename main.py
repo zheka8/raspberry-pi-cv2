@@ -30,7 +30,7 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int, det: ObjectDe
         image = frame.array
         det.detect(image, frame_count)
         
-        #cv2.imshow("Frame", image)
+        cv2.imshow("Frame", image)
          
         # Wait for keyPress for 1 millisecond
         key = cv2.waitKey(1) & 0xFF
