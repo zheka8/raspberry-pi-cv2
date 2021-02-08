@@ -1,10 +1,10 @@
 import cv2
 
-class ObjectDetector():
+class ObjectDetector:
     
-    def __init__(self):
+    def __init__(self, resolution):
         self.class_names = self.read_classes('yolov3/coco.names')
-        self.net = self.create_net()
+        self.net = self.create_net(resolution)
     
     def read_classes(self, filename: str) -> list:
         ''' read class names from a text file
@@ -16,10 +16,10 @@ class ObjectDetector():
             
         return [x.strip('\n') for x in classes]
 
-    def create_net(self):
+    def create_net(self, resolution):
         net = cv2.dnn_DetectionModel('yolov3/yolov3-tiny.weights', 'yolov3/yolov3-tiny.cfg')
         
-        net.setInputSize(416, 416) # TO DO: reshape images?
+        net.setInputSize(resolution[0], resolution[1]) # TO DO: reshape images?
         net.setInputSwapRB(True) # swap from openCV default to standard RBG
         net.setInputScale(1/255) # convert from 0..255 to 0..1
         net.setInputMean((0,0,0))
