@@ -3,9 +3,9 @@ import time
 
 class ObjectDetector:
     
-    def __init__(self, resolution):
-        self.class_names = self.read_classes('yolov3/coco.names')
-        self.net = self.create_net(resolution)
+    def __init__(self, resolution, yolo_ver):
+        self.class_names = self.read_classes(f'yolov{yolo_ver}/coco.names')
+        self.net = self.create_net(resolution, yolo_ver)
     
     def read_classes(self, filename: str) -> list:
         ''' read class names from a text file
@@ -17,8 +17,9 @@ class ObjectDetector:
             
         return [x.strip('\n') for x in classes]
 
-    def create_net(self, resolution):
-        net = cv2.dnn_DetectionModel('yolov3/yolov3-tiny.weights', 'yolov3/yolov3-tiny.cfg')
+    def create_net(self, resolution, yolo_ver):
+        net = cv2.dnn_DetectionModel(f'yolov{yolo_ver}/yolov{yolo_ver}-tiny.weights',
+                                     f'yolov{yolo_ver}/yolov{yolo_ver}-tiny.cfg')
         
         net.setInputSize(resolution[0], resolution[1]) # TO DO: reshape images?
         net.setInputSwapRB(True) # swap from openCV default to standard RBG

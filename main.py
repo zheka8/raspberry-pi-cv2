@@ -50,13 +50,13 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int, det: ObjectDe
     cv2.destroyAllWindows() 
 
 def main():
-    res = (320, 320)
+    res = (416, 416)
     FPS = 20
     rotation = 90
     num_frames = 100
     
     camera = setup_camera(rotation, res, FPS)
-    det = ObjectDetector(res)
+    det = ObjectDetector(res, 4)
     
     run_camera(camera, res, num_frames, det)
 
