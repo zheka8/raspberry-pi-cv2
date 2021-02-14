@@ -1,9 +1,12 @@
+#!/usb/bin/env/python3
+
 from picamera.array import PiRGBArray # Generates a 3D RGB array
 from picamera import PiCamera # Provides a Python interface for the RPi Camera Module
 import time # Provides time-related functions
 import cv2 # OpenCV library
 
 from object_detector import ObjectDetector
+from feature_detector import FeatureDetector
 
 def setup_camera(rotation: int, resolution: tuple, FPS: int) -> PiCamera:
     ''' setup the pi camera and return it
@@ -56,7 +59,9 @@ def main():
     num_frames = 100
     
     camera = setup_camera(rotation, res, FPS)
-    det = ObjectDetector(res, 4)
+    
+    #det = ObjectDetector(res, 4)
+    det = FeatureDetector(res)
     
     run_camera(camera, res, num_frames, det)
 
