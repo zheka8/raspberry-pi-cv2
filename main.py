@@ -1,4 +1,4 @@
-#!/usb/bin/env/python3
+#!/usr/bin/env python3
 
 from picamera.array import PiRGBArray # Generates a 3D RGB array
 from picamera import PiCamera # Provides a Python interface for the RPi Camera Module

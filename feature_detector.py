@@ -4,19 +4,23 @@ import time
 class FeatureDetector:
     
     def __init__(self, res):
-        pass
+        self.corners = []
     
     def detect(self, img, frame_count):
         # convert to grayscale
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         
+        # get features
         num_features = 55
         qual_level = 0.01
         min_distance = 10
-        
         corners = cv2.goodFeaturesToTrack(gray, num_features, qual_level, min_distance)
         
-        self.show(img, corners)
+        # add to storage container
+        self.corners.extend(corners)
+        
+        print(self.corners)
+        self.show(img, self.corners)
         
     def show(self, img, corners):
         cv2.imshow("Frame", img)
