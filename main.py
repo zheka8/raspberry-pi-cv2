@@ -56,12 +56,12 @@ def main():
     res = (416, 416)
     FPS = 20
     rotation = 90
-    num_frames = 100
+    num_frames = 1000
     
     camera = setup_camera(rotation, res, FPS)
     
     #det = ObjectDetector(res, 4)
-    det = FeatureDetector(res, num_features=40)
+    det = FeatureDetector(res, num_features=40, maxlen=1000)
     
     run_camera(camera, res, num_frames, det)
 
