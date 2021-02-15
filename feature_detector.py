@@ -28,9 +28,10 @@ class FeatureDetector:
         self.kps.extend(kps)
         print(self.kps)
 
-        self.show(img, kps)
-        
-    def show(self, img, kps):
+        #self.show(img, kps)
+        self.show(img)
+
+    def show(self, img):
         cv2.imshow('Frame', img)
         #cv2.drawKeypoints(img, kps, img, color=(0,255,0), flags=0)
         cv2.drawKeypoints(img, list(self.kps), img, color=(0,255,0), flags=0)
