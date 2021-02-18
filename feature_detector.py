@@ -26,7 +26,7 @@ class FeatureDetector:
         kps, des = self.orb.compute(gray, kps)
         
         self.kps.extend(kps)
-        print(self.kps)
+        print(kps[0].pt)
 
         #self.show(img, kps)
         self.show(img)
