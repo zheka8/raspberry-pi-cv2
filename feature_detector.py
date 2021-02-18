@@ -28,24 +28,32 @@ class FeatureDetector:
         kps = self.orb.detect(gray, None)
         kps, des = self.orb.compute(gray, kps)
        
+        print(f'Frame {frame_count} Num kps found: ', len(kps))
+
         # store keypoints, descriptors, and images
         self.kps.append(kps)
         self.des.append(des)
         self.imgs.append(img)
 
-    def show(self, img):
-        cv2.imshow('Frame', img)
-        #cv2.drawKeypoints(img, kps, img, color=(0,255,0), flags=0)
-        cv2.drawKeypoints(img, list(self.kps), img, color=(0,255,0), flags=0)
+        self.show(img, kps)
+
+        #print('len self.imgs', len(self.imgs))
+
+    def show(self, img, kps):
+        #cv2.imshow('Frame', img)
+        cv2.drawKeypoints(img, kps, img, color=(0,255,0), flags=0)
+        #cv2.drawKeypoints(img, list(self.kps), img, color=(0,255,0), flags=0)
+        #cv2.imshow('Matches', img)
 
     def match(self):
         ''' perform keypoint matching from the data stored in the detector
-        to do: move this method to the feature detector class
         '''
 
         matched_imgs = []
 
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+        #print('inside match, len(self.imgs)', len(self.imgs))
 
         # match between successive frames
         for i in range(1, len(self.imgs)):
@@ -58,11 +66,18 @@ class FeatureDetector:
             # sort in order of distance
             matches = sorted(matches, key = lambda x: x.distance)
 
+            #print('num matches: ', len(matches))
+            #print('i: ', i)
+            #print(self.imgs)
             img_out = cv2.drawMatches(img1, kps1, img2, kps2, matches[:40],
                                       None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
+            
+            cv2.imshow('InMatch', img_out)
+            key = cv2.waitKey(1) & 0xFF           
+
             matched_imgs.append(img_out)
 
-            return matched_imgs
+        return matched_imgs
 
 

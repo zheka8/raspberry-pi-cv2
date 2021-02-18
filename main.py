@@ -33,7 +33,7 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int, det: ObjectDe
         image = frame.array
         det.detect(image, frame_count)
         
-        cv2.imshow("Frame", image)
+        #cv2.imshow("Frame", image)
          
         # Wait for keyPress for 1 millisecond
         key = cv2.waitKey(1) & 0xFF
@@ -71,13 +71,13 @@ def main():
     camera = setup_camera(rotation, res, FPS)
     
     #det = ObjectDetector(res, 4)
-    det = FeatureDetector(res, num_features=40, maxlen=1000)
+    det = FeatureDetector(res, num_features=80, maxlen=1000)
     
     run_camera(camera, res, num_frames, det)
 
     matched_imgs = det.match()
 
-    cv2.imshow('Matches', matched_imgs[0])
+    input('type to exit')
 
 if __name__ == '__main__':
     main()
