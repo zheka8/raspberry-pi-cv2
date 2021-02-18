@@ -4,7 +4,7 @@ from picamera.array import PiRGBArray # Generates a 3D RGB array
 from picamera import PiCamera # Provides a Python interface for the RPi Camera Module
 import time # Provides time-related functions
 import cv2 # OpenCV library
-
+import argparse
 from object_detector import ObjectDetector
 from feature_detector import FeatureDetector
 
@@ -53,10 +53,20 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int, det: ObjectDe
     cv2.destroyAllWindows() 
 
 def main():
+    parser = argparse.ArgumentParser(description='Object Detection')
+    parser.add_argument('-n', '--num_frames', required=True, type=int,
+                        help='number of frames to process')
+    parser.add_argument('-fps', '--frames_per_second', required=True, type=int,
+                        help='frames per second')
+    parser.add_argument('-rot', '--rotation', required=True, type=int,
+                        help='camera rotation')
+
+    args = parser.parse_args()
+
     res = (416, 416)
-    FPS = 20
-    rotation = 90
-    num_frames = 1000
+    FPS = args.frames_per_second
+    rotation = args.rotation
+    num_frames = args.num_frames
     
     camera = setup_camera(rotation, res, FPS)
     
@@ -65,6 +75,9 @@ def main():
     
     run_camera(camera, res, num_frames, det)
 
+    matched_imgs = det.match()
+
+    cv2.imshow('Matches', matched_imgs[0])
 
 if __name__ == '__main__':
     main()
