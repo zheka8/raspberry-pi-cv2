@@ -90,9 +90,10 @@ def main():
             ret, frame = cap.read()
 
             if ret:
-                det.detect(frame, i)
+                frame_r = cv2.resize(frame, res)
+                det.detect(frame_r, i)
                 i += 1
-                if i > parser.num_frames:
+                if i > args.num_frames:
                     break
 
     # perform matches
