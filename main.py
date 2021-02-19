@@ -53,6 +53,8 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int, det: ObjectDe
     cv2.destroyAllWindows() 
 
 def main():
+    
+    # set up argument parser
     parser = argparse.ArgumentParser(description='Object Detection')
     parser.add_argument('-n', '--num_frames', required=True, type=int,
                         help='number of frames to process')
@@ -60,21 +62,40 @@ def main():
                         help='frames per second')
     parser.add_argument('-rot', '--rotation', required=True, type=int,
                         help='camera rotation')
+    parser.add_argument('-v', '--video', required=False, type=str,
+                        help='optional path to pre-recorded video file')
 
     args = parser.parse_args()
 
     res = (416, 416)
-    FPS = args.frames_per_second
-    rotation = args.rotation
-    num_frames = args.num_frames
-    
-    camera = setup_camera(rotation, res, FPS)
-    
+
+    # create detector
     #det = ObjectDetector(res, 4)
     det = FeatureDetector(res, num_features=80, maxlen=1000)
-    
-    run_camera(camera, res, num_frames, det)
+   
+    # use camera if video file is not provided
+    if args.video is None:
+        camera = setup_camera(args.rotation, res, args.frames_per_second)
+        run_camera(camera, res, args.num_frames, det)
+    else:
+        # create a cv2 video capture object
+        cap = cv2.VideoCapture(args.video)
 
+        # read frame by frame
+        if not cap.isOpened():
+            print("Error opening video: ", args.video)
+
+        i = 0
+        while cap.isOpened():
+            ret, frame = cap.read()
+
+            if ret:
+                det.detect(frame, i)
+                i += 1
+                if i > parser.num_frames:
+                    break
+
+    # perform matches
     matched_imgs = det.match()
 
     input('type to exit')
