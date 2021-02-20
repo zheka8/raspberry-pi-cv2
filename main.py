@@ -71,7 +71,7 @@ def main():
 
     # create detector
     #det = ObjectDetector(res, 4)
-    det = FeatureDetector(res, num_features=100, maxlen=100)
+    det = FeatureDetector(res, num_features=100, maxlen=1000)
    
     # use camera if video file is not provided
     if args.video is None:
