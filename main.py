@@ -31,7 +31,7 @@ def run_camera(camera: PiCamera, resolution: int, num_frames: int, det: ObjectDe
          
         # Grab the raw NumPy array representing the image
         image = frame.array
-        det.detect(image, frame_count)
+        det.detect_and_match(image, frame_count)
         
         #cv2.imshow("Frame", image)
          
@@ -71,7 +71,7 @@ def main():
 
     # create detector
     #det = ObjectDetector(res, 4)
-    det = FeatureDetector(res, num_features=80, maxlen=1000)
+    det = FeatureDetector(res, num_features=100, maxlen=100)
    
     # use camera if video file is not provided
     if args.video is None:
@@ -81,23 +81,20 @@ def main():
         # create a cv2 video capture object
         cap = cv2.VideoCapture(args.video)
 
-        # read frame by frame
         if not cap.isOpened():
             print("Error opening video: ", args.video)
 
+        # read frame by frame
         i = 0
         while cap.isOpened():
             ret, frame = cap.read()
 
             if ret:
                 frame_r = cv2.resize(frame, res)
-                det.detect(frame_r, i)
+                det.detect_and_match(frame_r, i)
                 i += 1
                 if i > args.num_frames:
                     break
-
-    # perform matches
-    matched_imgs = det.match()
 
     input('type to exit')
 

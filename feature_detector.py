@@ -8,11 +8,15 @@ class FeatureDetector:
         self.corners = []
         self.orb = cv2.ORB_create(nfeatures=num_features)
         #self.kps = collections.deque(maxlen=maxlen)
-        self.kps = []
-        self.des = []
-        self.imgs = []
 
-    def detect(self, img, frame_count=0):
+        # store previous frame info
+        self.kps_prev = []
+        self.des_prev = []
+        self.img_prev = None
+
+        self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+    def detect_and_match(self, img, frame_count=0):
         # convert to grayscale
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         
@@ -30,14 +34,19 @@ class FeatureDetector:
        
         print(f'Frame {frame_count} Num kps found: ', len(kps))
 
+        if self.img_prev is not None: 
+            self.match(kps, des, img)
+
+        self.img_prev = img
+        self.kps_prev = kps
+        self.des_prev = des
+
         # store keypoints, descriptors, and images
+        '''
         self.kps.append(kps)
         self.des.append(des)
         self.imgs.append(img)
-
-        #self.show(img, kps)
-
-        #print('len self.imgs', len(self.imgs))
+        '''
 
     def show(self, img, kps):
         #cv2.imshow('Frame', img)
@@ -45,8 +54,9 @@ class FeatureDetector:
         #cv2.drawKeypoints(img, list(self.kps), img, color=(0,255,0), flags=0)
         #cv2.imshow('Matches', img)
 
-    def show_matches(self, matches, kps, img):
-        '''
+    def draw_matches(self, matches, kps, img):
+        ''' Draw matches on the current img and return it
+
         What is this Matcher Object?
         The result of matches = bf.match(des1,des2) line is a list of DMatch objects. 
         This DMatch object has following attributes:
@@ -67,46 +77,25 @@ class FeatureDetector:
 
         return img_out
 
-    def match(self):
-        ''' perform keypoint matching from the data stored in the detector
+    def match(self, kps, des, img):
+        ''' perform keypoint matching with previous frame
         '''
 
-        matched_imgs = []
+        matches = self.bf.match(self.des_prev, des)
 
-        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        # sort in order of distance
+        matches = sorted(matches, key = lambda x: x.distance)
 
-        #print('inside match, len(self.imgs)', len(self.imgs))
+        # display matched keypoints on the current image
+        img_out = self.draw_matches(matches, kps,  img)
 
-        # match between successive frames
-        for i in range(1, len(self.imgs)):
-            des1, des2 = self.des[i-1], self.des[i]
-            kps1, kps2 = self.kps[i-1], self.kps[i]
-            img1, img2 = self.imgs[i-1], self.imgs[i]
+        '''
+        img_out = cv2.drawMatches(img1, kps1, img2, kps2, matches[:40],
+                                  None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+        '''
+        
+        cv2.imshow('InMatch', img_out)
+        key = cv2.waitKey(1) & 0xFF           
 
-            matches = bf.match(des1, des2)
-
-            #print('imgIdx: ', matches[0].imgIdx)
-
-            # sort in order of distance
-            matches = sorted(matches, key = lambda x: x.distance)
-
-            # display matched keypoints on the current image
-            time.sleep(0.2)
-            img_out = self.show_matches(matches, kps2,  img2)
-
-            #print('num matches: ', len(matches))
-            #print('i: ', i)
-            #print(self.imgs)
-            '''
-            img_out = cv2.drawMatches(img1, kps1, img2, kps2, matches[:40],
-                                      None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-            '''
-            
-            cv2.imshow('InMatch', img_out)
-            key = cv2.waitKey(1) & 0xFF           
-
-            matched_imgs.append(img_out)
-
-        return matched_imgs
 
 
