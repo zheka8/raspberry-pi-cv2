@@ -100,7 +100,7 @@ class FeatureDetector:
         matches = sorted(matches, key = lambda x: x.distance)
 
         # take only n first matches
-        matches = matches[:40]
+        matches = matches[20:40]
 
         # display matched keypoints on the current image
         img_out = self.draw_matches(matches, kps,  img)
