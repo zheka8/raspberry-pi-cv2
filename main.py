@@ -5,6 +5,7 @@ import argparse
 from object_detector import ObjectDetector
 from feature_detector import FeatureDetector
 from camera import Camera
+from video_reader import VideoReader
 
 def main():
     # set up argument parser
@@ -31,24 +32,10 @@ def main():
         camera = Camera(args.rotation, res, args.frames_per_second)
         camera.run(args.num_frames, det)
     else:
-        # create a cv2 video capture object
-        cap = cv2.VideoCapture(args.video)
+        video_reader = VideoReader(args.video) 
+        video_reader.read_and_process(resize_by=0.25, num_frames=args.num_frames, detector=det)
 
-        if not cap.isOpened():
-            print("Error opening video: ", args.video)
-
-        # read frame by frame
-        i = 0
-        while cap.isOpened():
-            ret, frame = cap.read()
-
-            if ret:
-                frame_r = cv2.resize(frame, res)
-                det.detect_and_match(frame_r, i)
-                i += 1
-                if i > args.num_frames:
-                    break
-
+        
     input('type to exit')
 
 if __name__ == '__main__':
