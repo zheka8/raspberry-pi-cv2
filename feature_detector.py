@@ -70,8 +70,14 @@ class FeatureDetector:
         for m in matches:
             # extract matched keypoint and save it
             kps_to_draw_t.append(kps[m.trainIdx])
-            kps_to_draw_q.append(kps[m.queryIdx])
+            kps_to_draw_q.append(self.kps_prev[m.queryIdx])
 
+            pt1 = tuple(map(int, kps[m.trainIdx].pt))
+            pt2 = tuple(map(int, self.kps_prev[m.queryIdx].pt))
+
+            # connect keypoints with a line
+            img_out = cv2.line(img, pt1, pt2, color=(0, 255, 0), thickness=2)
+     
         img_out = cv2.drawKeypoints(img, kps_to_draw_t, img, color=(255, 0, 0), flags=0)
         img_out = cv2.drawKeypoints(img_out, kps_to_draw_q, img_out, color=(0, 0, 255), flags=0)
 
@@ -85,6 +91,9 @@ class FeatureDetector:
 
         # sort in order of distance
         matches = sorted(matches, key = lambda x: x.distance)
+
+        # take only n first matches
+        matches = matches[:40]
 
         # display matched keypoints on the current image
         img_out = self.draw_matches(matches, kps,  img)
